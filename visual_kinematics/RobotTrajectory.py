@@ -82,14 +82,18 @@ class RobotTrajectory(object):
             inter_time_points[progress] = np.sum(lengths[0:index]) + lengths[index] * p_temp
         return inter_values, inter_time_points
 
-    def show(self, num_segs=100, motion="p2p", method="linear"):
+    def show(self, num_segs=100, motion="p2p", method="linear",ax=None,title=""):
         # setup slider
-        axamp = plt.axes([0.15, .06, 0.75, 0.02])
-        samp = Slider(axamp, "progress", 0., 1., valinit=0)
+        if ax == None:
+            axamp = plt.axes([0.15, .06, 0.75, 0.02])
+        else:
+            axamp = ax
+        samp = Slider(axamp, "progress", 0., 1., valinit=0,valstep=0.01)
         # interpolation values
         inter_values, inter_time_points = self.interpolate(num_segs, motion, method)
         # save point for drawing trajectory
         x, y, z = [], [], []
+        plt.title(title)
         for i in range(num_segs + 1):
             self.robot.forward(inter_values[i])
             x.append(self.robot.end_frame.t_3_1[0, 0])
@@ -98,15 +102,20 @@ class RobotTrajectory(object):
 
         def update(val):
             self.robot.forward(inter_values[int(np.floor(samp.val * num_segs))])
-            self.robot.draw()
+            self.robot.draw()   
             # plot trajectory
-            self.robot.ax.plot_wireframe(x, y, np.array([z]), color="lightblue")
+            self.robot.ax.plot_wireframe(x, y, np.array([z]), color="black")
             self.robot.figure.canvas.draw_idle()
 
         samp.on_changed(update)
         # plot initial
         self.robot.forward(inter_values[0])
         self.robot.draw()
-        self.robot.ax.plot_wireframe(x, y, np.array([z]), color="lightblue")
+        # self.robot.ax.set_xlim(-1,1)
+        # self.robot.ax.set_ylim(-1,1)
+        # self.robot.ax.set_zlim(0,1)
+        self.robot.ax.plot_wireframe(x, y, np.array([z]), color="black")
+        
+        #axamp.set_zlim(0,1)
         plt.show()
-        return inter_values, inter_time_points
+        return inter_values, inter_time_points,samp

@@ -55,8 +55,9 @@ class Frame:
     def r_3(self):
         return Rotation.from_matrix(self.r_3_3).as_rotvec()
 
-    #  rotation in ZYX euler angel format
+    #  rotation in ZYX euler angel format #PITCH, YAW & ROLL
     @property
+    
     def euler_3(self):
         return Rotation.from_matrix(self.r_3_3).as_euler("ZYX", degrees=False)
 

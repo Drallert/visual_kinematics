@@ -65,6 +65,10 @@ class Robot(object):
         axes_indices = np.zeros([self.num_axis, ], dtype=np.int32)
         for i in range(num_points):
             points[i] = self.forward(lower + axes_indices*intervals).t_3_1.flatten()
+            if (points[i][2] < 0 or (abs(points[i][0] < 0.2) and abs(points[i][1] < 0.2) and points[i][2] < 0.6)):
+                points[i][0] = 0
+                points[i][1] = 0
+                points[i][2] = 0
             axes_indices[0] += 1
             for check_index in range(self.num_axis):
                 if axes_indices[check_index] >= self.ws_division:
@@ -93,7 +97,7 @@ class Robot(object):
     def draw_ws(self):
         self.plot_settings()
         points = self.workspace()
-        self.ax.scatter(points[:, 0], points[:, 1], points[:, 2], c="red", marker="o")
+        self.ax.scatter(points[:, 0], points[:, 1], points[:, 2], c="green", marker=".")
 
     def show(self, body=True, ws=False):
         if body:

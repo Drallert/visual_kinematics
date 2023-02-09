@@ -1,9 +1,10 @@
 import numpy as np
 from math import pi
-
+import logging
 
 # ================== constrain angle between -pi and pi
 def simplify_angle(angle):
+    
     while angle > pi:
         angle -= 2 * pi
     while angle < -pi:
@@ -13,6 +14,7 @@ def simplify_angle(angle):
 
 # ================== constrain angles[n, ] between -pi and pi
 def simplify_angles(angles):
+    logging.info(angles)
     for i in range(angles.shape[0]):
         angles[i] = simplify_angle(angles[i])
     return angles
